@@ -4,6 +4,21 @@ ARG BUILD_ARCH
 
 RUN apk add --no-cache jq
 
+RUN \
+    apk add --no-cache --virtual .build-dependencies \
+        build-base=0.5-r2 \
+        git=2.34.1-r0 \
+        protobuf-dev=3.18.1-r1 \
+        pulseaudio-dev=15.0-r2 \
+    \
+    && apk add --no-cache \
+        pulseaudio=15.0-r2 \
+    \
+    && apk del --no-cache --purge .build-dependencies \
+    && rm -fr \
+        /tmp/*
+
+
 RUN sed -i -e s#"ipv6 = yes"#"ipv6 = no"#g /etc/owntone.conf.orig \
     && sed -i s#/srv/music#/share/owntone/music#g /etc/owntone.conf.orig \
     && sed -i s#/var/cache/owntone/songs3.db#/share/owntone/dbase_and_logs/songs3.db#g /etc/owntone.conf.orig \
